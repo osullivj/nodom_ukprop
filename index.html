@@ -43,29 +43,240 @@
         <script type="text/javascript">
             const init_layout = [
                 {
-                    rname: "Home",
-                    cspec: {
-                        title: "Loading NoDOM app",
+                    "rname": "Home",
+                    "cspec": {
+                        "title": "UK Property Prices",
+                        "title_font": "Arial"
                     },
-                    children: [],
+                    "children": [
+                        {
+                            "rname": "PushFont",
+                            "cspec": {
+                                "font": "CourierNew"
+                            }
+                        },
+                        {
+                            "rname": "BeginChild",
+                            "cspec": {
+                                "title": "Main pane",
+                                "child_flags": 5
+                            }
+                        },
+                        {
+                            "rname": "DatePicker",
+                            "cspec": {
+                                "cname": "start_date",
+                                "year_month_font": "CourierNew",
+                                "year_month_font_size": 12,
+                                "day_date_font": "Arial",
+                                "day_date_font_size": 8,
+                                "table_flags": 0,
+                                "combo_flags": 8
+                            }   
+                        },
+                        {
+                            "rname": "SameLine"
+                        },
+                        {
+                            "rname": "Text",
+                            "cspec": {
+                                "text": "start_date_text"
+                            }
+                        },
+                        {
+                            "rname": "DatePicker",
+                            "cspec": {
+                                "cname": "end_date",
+                                "year_month_font": "CourierNew",
+                                "year_month_font_size": 12,
+                                "day_date_font": "Arial",
+                                "day_date_font_size": 8,
+                                "table_flags": 0,
+                                "combo_flags": 8
+                            }
+                        },
+                        {
+                            "rname": "SameLine"
+                        },
+                        {
+                            "rname": "Text",
+                            "cspec": {
+                                "text": "end_date_text"
+                            }
+                        },
+                        {
+                            "rname": "Separator",
+                            "cspec": {}
+                        },
+                        {
+                            "rname": "Button",
+                            "widget_id": "i_am_chart_button",
+                            "cspec": {
+                                "text": "chart_text",
+                                "tooltip": "Raise the charting window"
+                            }
+                        },
+                        {
+                            "rname": "Footer",
+                            "cspec": {
+                                "db": true,
+                                "fps": true,
+                                "demo": true,
+                                "font_scale": true,
+                                "style": true,
+                                "dlc": true
+                            }
+                        },
+                        {
+                            "rname": "Spacing",
+                            "cspec": {}
+                        },
+                        {   
+                            "rname": "DebugFooter",
+                            "cspec": {}
+                        },
+                        {
+                            "rname": "Separator",
+                            "cspec": {}
+                        },
+                        {
+                            "rname": "BulkTable",
+                            "cspec": {
+                                "title": "Transactions",
+                                "query_id": "select_prices",
+                                "menupop": "table_rclick_menupop",
+                                "table_flags": 50333543
+                            }
+                        },
+                        {
+                            "rname": "Separator",
+                            "cspec": {}
+                        },
+                        {
+                            "rname": "EndChild"
+                        },
+                        {
+                            "rname": "PopFont"
+                        }
+                    ]
                 },
                 {
-                    widget_id: "app_loading_modal",
-                    rname: "LoadingModal",
-                    cspec: {
-                        title: "Loading NoDOM app...",
-                        cname: "loading_text",
-                    },
+                    "widget_id": "parquet_loading_modal",
+                    "rname": "LoadingModal",
+                    "cspec": {
+                        "title": "Loading parquet...",
+                        "title_font": "Arial",
+                        "body_font": "CourierNew",
+                        "cname": "scan_urls",
+                        "spinner_radius": 20,
+                        "spinner_thickness": 4
+                    }
                 },
+                {
+                    "widget_id": "i_am_memory_editor",
+                    "rname": "MemoryEditor",
+                    "cspec": {
+                        "text": "mem_edit_text",
+                        "address": "mem_edit_addr",
+                        "size": "mem_edit_size"
+                    }
+                },
+                {
+                    "widget_id": "i_am_chart_window",
+                    "rname": "Window",
+                    "cspec": {
+                        "title": "Chart",
+                        "title_font": "Arial",
+                        "window_flags": 0,
+                        "close_button": true
+                    },
+                    "children": [
+                        {
+                            "widget_id": "i_am_plot",
+                            "rname": "ShadedPlot",
+                            "cspec": {
+                                "title": "Property",
+                                "show_lines": false,
+                                "show_fills": false,
+                                "show_scatter": true,
+                                "xtime": true,
+                                "iso_time": true,
+                                "local_time": true,
+                                "query_id": "select_prices",
+                                "xname": "xaxis",
+                                "xscaling": "xscale",
+                                "yname": "yaxis"
+                            }
+                        }
+                    ]
+                }
             ];
             const init_data = {
-                loading_text: ["Loading app data"],
-                actions: {
-                    "GUI.online": [{ ui_push: "app_loading_modal" }],
-                    "WebSock.websock_connection_failed": [
-                        { ui_pop: "LoadingModal" },
+                "start_date": [2008,9,1],
+                "end_date": [2008,9,2],
+                "start_date_text": "Start date",
+                "end_date_text": "End date",
+                "chart_text": "Chart",
+                "scan_urls": [
+                    "s3://datasets-documentation/uk-house-prices/parquet"
+                ],
+                "httpfs_sql": "INSTALL httpfs; LOAD httpfs;",
+                "table_sql": "BEGIN; CREATE TABLE IF NOT EXISTS prices AS\n SELECT price, date, postcode1, postcode2, type, is_new, duration, addr1, addr2\n FROM read_csv_auto('https://datasets-documentation.s3.eu-west-3.amazonaws.com/uk-house-prices/csv/house_prices.csv.gz', types={'price': 'DOUBLE', 'date': 'DOUBLE', 'type': 'INTEGER', 'is_new': 'INTEGER', 'duration': 'INTEGER'})\n WHERE COLUMNS('[price|date|postcode?|addr?]') IS NOT NULL;COMMIT;",
+                "select_sql": "select * from prices;",
+                "enable_logging_sql": "INSTALL parquet; CALL enable_logging(level='debug', storage='stdout');",
+                "prices_storage_sql": "PRAGMA storage_info('prices');",
+                "memory_limit_sql": "SELECT current_setting('memory_limit');",
+                "mem_edit_addr": 0,
+                "mem_edit_size": 0,
+                "mem_edit_text": "Memory Editor",
+                "xaxis": "date",
+                "xscale": 86400.0,
+                "yaxis": "price",
+                "actions": {
+                    "i_am_chart_button.Click": [
+                        {
+                            "ui_push": "i_am_chart_window"
+                        }
                     ],
+                    "DuckDB.Online": [
+                        {
+                            "action": "Command",
+                            "query_id": "load_and_install_httpfs",
+                            "cname": "httpfs_sql"
+                        },
+                        {
+                            "ui_push": "parquet_loading_modal",
+                            "action": "Command",
+                            "query_id": "create_prices_table",
+                            "cname": "table_sql"
+                        },
+                        {
+                            "ui_pop": "LoadingModal",
+                            "action": "Query",
+                            "query_id": "select_prices",
+                            "cname": "select_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_prices"
+                        }
+                    ],
+                    "Memory Editor.Menu": [
+                        {
+                            "ui_push": "i_am_memory_editor"
+                        }
+                    ]
                 },
+                "menus": {
+                    "table_rclick_menupop": [
+                        "Memory Editor"
+                    ]
+                },
+                "types": {
+                    "cdPtr": ["mem_edit_addr"],
+                    "cdInt": ["mem_edit_size"],
+                    "cdStr": ["mem_edit_text"]
+                }
             };
             const nd_config = {
                 fonts: ["CourierNew.ttf", "Arial.ttf"],
