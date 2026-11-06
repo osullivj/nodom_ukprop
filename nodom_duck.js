@@ -6282,7 +6282,7 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
 var ASM_CONSTS = {
-  332306: ($0) => { return Module.glfwGetWindow(UTF8ToString($0)); }
+  332322: ($0) => { return Module.glfwGetWindow(UTF8ToString($0)); }
 };
 function ems_db_dispatch(db_request_handle) { var db_request = Emval.toValue(db_request_handle); window.postMessage(db_request); }
 function exec_js_action_sync(raw_fn_inx,data_handle,rv_handle) { var data_cache = Emval.toValue(data_handle); var rv = Emval.toValue(rv_handle); var func_array = Module["nodom_functions"]; func_array[raw_fn_inx](data_cache, rv); rv["query_id"] = raw_fn_inx; on_db_result(rv); }
