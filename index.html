@@ -72,7 +72,7 @@
                                 "day_date_font_size": 8,
                                 "table_flags": 0,
                                 "combo_flags": 8
-                            }   
+                            }
                         },
                         {
                             "rname": "SameLine"
@@ -98,7 +98,7 @@
                         {
                             "rname": "SameLine"
                         },
-                        {
+                        {   
                             "rname": "Text",
                             "cspec": {
                                 "text": "end_date_text"
@@ -131,7 +131,7 @@
                             "rname": "Spacing",
                             "cspec": {}
                         },
-                        {   
+                        {
                             "rname": "DebugFooter",
                             "cspec": {}
                         },
@@ -143,7 +143,7 @@
                             "rname": "BulkTable",
                             "cspec": {
                                 "title": "Transactions",
-                                "query_id": "select_prices",
+                                "query_id": "select_all_prices",
                                 "menupop": "table_rclick_menupop",
                                 "table_flags": 50333543
                             }
@@ -192,21 +192,109 @@
                     },
                     "children": [
                         {
-                            "widget_id": "i_am_plot",
                             "rname": "ShadedPlot",
                             "cspec": {
-                                "title": "Property",
+                                "title": "UK Property Transactions",
                                 "show_lines": false,
                                 "show_fills": false,
-                                "show_scatter": true,
+                                "show_scatter": false,
                                 "xtime": true,
                                 "iso_time": true,
                                 "local_time": true,
-                                "query_id": "select_prices",
+                                "query_id": "select_all_prices",
                                 "xname": "xaxis",
                                 "xscaling": "xscale",
                                 "yname": "yaxis"
-                            }
+                            },
+                            "children": [
+                                {
+                                    "rname": "Curve",
+                                    "cspec": {
+                                        "show_lines": false,
+                                        "show_fills": false,
+                                        "show_scatter": true,
+                                        "xtime": true,
+                                        "iso_time": true,
+                                        "local_time": true,
+                                        "xname": "xaxis",
+                                        "xscaling": "xscale",
+                                        "yname": "yaxis",
+                                        "title": "other",
+                                        "query_id": "select_other_prices"
+                                    }
+                                },
+                                {
+                                    "rname": "Curve",
+                                    "cspec": {
+                                        "show_lines": false,
+                                        "show_fills": false,
+                                        "show_scatter": true,
+                                        "xtime": true,
+                                        "iso_time": true,
+                                        "local_time": true,
+                                        "xname": "xaxis",
+                                        "xscaling": "xscale",
+                                        "yname": "yaxis",
+                                        "title": "flat",
+                                        "query_id": "select_flat_prices"
+                                    }
+                                },
+                                {
+                                    "rname": "Curve",
+                                    "cspec": {
+                                        "show_lines": false,
+                                        "show_fills": false,
+                                        "show_scatter": true,
+                                        "xtime": true,
+                                        "iso_time": true,
+                                        "local_time": true,
+                                        "xname": "xaxis",
+                                        "xscaling": "xscale",
+                                        "yname": "yaxis",
+                                        "title": "detached",
+                                        "query_id": "select_detached_prices"
+                                        }
+                                },
+                                {
+                                    "rname": "Curve",
+                                    "cspec": {
+                                        "show_lines": false,
+                                        "show_fills": false,
+                                        "show_scatter": true,
+                                        "xtime": true,
+                                        "iso_time": true,
+                                        "local_time": true,
+                                        "xname": "xaxis",
+                                        "xscaling": "xscale",
+                                        "yname": "yaxis",
+                                        "title": "semi",
+                                       "query_id": "select_semi_prices"
+                                    }
+                                },
+                                {
+                                    "rname": "Curve",
+                                    "cspec": {
+                                        "show_lines": false,
+                                        "show_fills": false,
+                                        "show_scatter": true,
+                                        "xtime": true,
+                                        "iso_time": true,
+                                        "local_time": true,
+                                        "xname": "xaxis",
+                                        "xscaling": "xscale",
+                                        "yname": "yaxis",
+                                        "title": "terrace",
+                                        "query_id": "select_terrace_prices"
+                                    }
+                                },
+                                {
+                                    "rname": "PlotHover",
+                                    "cspec": {
+                                        "title": "property_hover_tip",
+                                        "buffer_size": 256
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -221,8 +309,8 @@
                     "s3://datasets-documentation/uk-house-prices/parquet"
                 ],
                 "httpfs_sql": "INSTALL httpfs; LOAD httpfs;",
-                "table_sql": "BEGIN; CREATE TABLE IF NOT EXISTS prices AS\n SELECT price, date, postcode1, postcode2, type, is_new, duration, addr1, addr2\n FROM read_csv_auto('https://datasets-documentation.s3.eu-west-3.amazonaws.com/uk-house-prices/csv/house_prices.csv.gz', types={'price': 'DOUBLE', 'date': 'DOUBLE', 'type': 'INTEGER', 'is_new': 'INTEGER', 'duration': 'INTEGER'})\n WHERE COLUMNS('[price|date|postcode?|addr?]') IS NOT NULL;COMMIT;",
-                "select_sql": "select * from prices;",
+                "table_sql": "BEGIN; CREATE TABLE IF NOT EXISTS prices AS\n SELECT price, date, postcode1, postcode2, type, is_new, duration, addr1, addr2\n FROM read_csv_auto('https://datasets-documentation.s3.eu-west-3.amazonaws.com/uk-house-prices/csv/house_prices.csv.gz', types={'price': 'DOUBLE', 'date': 'DOUBLE', 'type': 'INTEGER', 'is_new': 'INTEGER', 'duration': 'INTEGER'})\n WHERE COLUMNS('[price|date|postcode?|addr?]') IS NOT NULL\n AND DATE > 1.0; COMMIT;",
+                "select_all_sql": "select * from prices order by date asc,price asc;",
                 "enable_logging_sql": "INSTALL parquet; CALL enable_logging(level='debug', storage='stdout');",
                 "prices_storage_sql": "PRAGMA storage_info('prices');",
                 "memory_limit_sql": "SELECT current_setting('memory_limit');",
@@ -251,14 +339,61 @@
                             "cname": "table_sql"
                         },
                         {
-                            "ui_pop": "LoadingModal",
                             "action": "Query",
-                            "query_id": "select_prices",
-                            "cname": "select_sql"
+                            "query_id": "select_all_prices",
+                            "cname": "select_all_sql"
                         },
                         {
                             "action": "BatchRequest",
-                            "query_id": "select_prices"
+                            "query_id": "select_all_prices"
+                        },
+                        {
+                            "action": "Query",
+                            "query_id": "select_other_prices",
+                            "cname": "select_other_prices_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_other_prices"
+                        },
+                        {
+                            "action": "Query",
+                            "query_id": "select_flat_prices",
+                            "cname": "select_flat_prices_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_flat_prices"
+                        },
+                        {
+                            "action": "Query",
+                            "query_id": "select_detached_prices",
+                            "cname": "select_detached_prices_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_detached_prices"
+                        },
+                        {
+                            "action": "Query",
+                            "query_id": "select_semi_prices",
+                            "cname": "select_semi_prices_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_semi_prices"
+                        },
+                        {
+                            "action": "Query",
+                            "query_id": "select_terrace_prices",
+                            "cname": "select_terrace_prices_sql"
+                        },
+                        {
+                            "action": "BatchRequest",
+                            "query_id": "select_terrace_prices"
+                        },
+                        {
+                            "ui_pop": "LoadingModal"
                         }
                     ],
                     "Memory Editor.Menu": [
@@ -273,10 +408,21 @@
                     ]
                 },
                 "types": {
-                    "cdPtr": ["mem_edit_addr"],
-                    "cdInt": ["mem_edit_size"],
-                    "cdStr": ["mem_edit_text"]
-                }
+                    "cdPtr": [
+                        "mem_edit_addr"
+                    ],
+                    "cdInt": [
+                        "mem_edit_size"
+                    ],
+                    "cdStr": [
+                        "mem_edit_text"
+                    ]
+                },
+                "select_other_prices_sql": "select date,price from prices where type=5;",
+                "select_flat_prices_sql": "select date,price from prices where type=4;",
+                "select_detached_prices_sql": "select date,price from prices where type=3;",
+                "select_semi_prices_sql": "select date,price from prices where type=2;",
+                "select_terrace_prices_sql": "select date,price from prices where type=1;"
             };
             const nd_config = {
                 fonts: ["CourierNew.ttf", "Arial.ttf"],
